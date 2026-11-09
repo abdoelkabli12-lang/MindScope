@@ -1,0 +1,70 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Data
+# =========================
+data/raw/*
+data/processed/*
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# =========================
+# Model artifacts
+# =========================
+models/*.pkl
+models/*.joblib
+models/*.h5
+
+# =========================
+# Airflow
+# =========================
+airflow.cfg
+airflow.db/
+logs/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
