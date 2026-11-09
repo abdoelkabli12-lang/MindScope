@@ -68,3 +68,8 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# =========================
+# Rust
+# =========================
+rust-core/target/
