@@ -2,7 +2,7 @@ mod config;
 
 use std::{collections::{HashMap, HashSet}, error::Error};
 use csv::{Reader, StringRecord};
-use crate::config::{COLUMN_NAMES};
+use crate::config::{COLUMN_NAMES, DIET_QUALITY_CATEGORIES, GENDER_CATEGORIES, MENTAL_HEALTH_HISTORY_CATEGORIES, MENTAL_HEALTH_RISK_CATEGORIE, PART_TIME_JOB_CATEGORIES, PHYSICAL_ACTIVITY_CATEGORIES, YEAR_OF_STUDY, NUMERICAL_COLUMNS};
 use std::fs::File;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -16,12 +16,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let delete_dups = remove_duplicate_ids(&headers, &records);
     print!("{:?}", delete_dups);
 
+    
     let miss_val_rep = analyze_missing_values(&headers, &records)?; 
     for (missing, count) in miss_val_rep{
       let percentage = (count as f64) / (records.len() as f64) * 100.0;
       println!("\n\ncolumn: {} \nmissing count: {} \n", missing, count);
       println!("The percentage: {}%", percentage);
     }
+    let cat_val = validate_categorical_values(&headers, &records);
+    println!("{:#?}", cat_val);
 
     Ok(())
 }
@@ -135,4 +138,74 @@ fn analyze_missing_values <'a>(headers: &'a StringRecord, records: &[StringRecor
     }
   
   Ok(missing_cols)
+}
+
+fn validate_categorical_values(headers: &StringRecord, records: &[StringRecord]) -> Result<(), Box<dyn Error>> {
+  let categories: Vec<(&str, &[&str])> = vec!(
+    ("Gender", &GENDER_CATEGORIES),
+    ("Physical_Activity", &PHYSICAL_ACTIVITY_CATEGORIES),
+    ("Diet_Quality", &DIET_QUALITY_CATEGORIES),
+    ("Part_Time_Job", &PART_TIME_JOB_CATEGORIES),
+    ("Previous_Mental_Health_History", &MENTAL_HEALTH_HISTORY_CATEGORIES),
+    ("Mental_Health_Risk", &MENTAL_HEALTH_RISK_CATEGORIE),
+    ("Year_of_Study", &YEAR_OF_STUDY)
+  );
+  let mut valid_count = 0;
+  let mut invalid_count = 0;
+
+  for (column, allowed_val) in categories {
+    let col_index = headers.iter().position(|c| c == column).ok_or("Not Found")?;
+    for(ind, record) in records.iter().enumerate(){
+      let field = record.get(col_index).ok_or("Not Found")?;
+      if field.trim().is_empty() {
+        println!("The value for the column field {} is empty in the record {}", column, ind + 1);
+        continue;
+    }
+    if allowed_val.contains(&field.trim()){
+      valid_count += 1;
+    } else {
+      println!("filed {:#?} index of record {} has an invalid value in {} column", field, ind + 1, column);
+      invalid_count += 1;
+    }
+    }
+  }
+
+  println!("Valid values count {}\n", valid_count);
+  println!("Invalid values count {}", invalid_count);
+  if invalid_count > 0 {
+    Err(format!("Validation failed: {} invalid value(s) found", invalid_count).into())
+} else {
+    Ok(())
+}
+}
+
+fn validate_numerical_values(
+    headers: &StringRecord,
+    records: &[StringRecord]
+) -> Result<(), Box<dyn Error>> {
+
+    let mut valid_count = 0;
+    let mut invalid_count = 0;
+
+    for column in NUMERICAL_COLUMNS {
+        let col_index = headers.iter().position(|c| c == column).ok_or("Column not found")?;
+        for (ind, record) in records.iter().enumerate() {
+            let field = record.get(col_index).ok_or("Field not found")?;
+            if field.trim().is_empty() {
+                println!("Missing value in {} at record {}", column, ind + 1);
+                continue;
+            }
+
+            // YOUR VALIDATION LOGIC HERE
+        }
+    }
+
+    println!("Valid values: {}", valid_count);
+    println!("Invalid values: {}", invalid_count);
+
+    if invalid_count > 0 {
+        Err(format!("Validation failed: {} invalid value(s)", invalid_count).into())
+    } else {
+        Ok(())
+    }
 }
