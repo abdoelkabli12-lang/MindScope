@@ -1,10 +1,4 @@
-mod config;
-mod ingestion;
-mod analysis;
-mod validation;
-mod duplicates;
-
-use crate::{duplicates::{detect_duplicate_ids, remove_duplicate_ids, report_duplicate_records},
+use mindscope_core::{duplicates::{detect_duplicate_ids, remove_duplicate_ids, report_duplicate_records},
           ingestion::{ingest_dataset, validate_record_length}, 
           validation::{validate_categorical_values, validate_numerical_values}, 
           analysis::analyze_missing_values};
@@ -12,7 +6,7 @@ use crate::{duplicates::{detect_duplicate_ids, remove_duplicate_ids, report_dupl
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let (records, headers) = ingest_dataset("../../data/raw/student_mental_health.csv")?;
+    let (records, headers) = ingest_dataset("../data/raw/student_mental_health.csv")?;
     let (valid, invalid) = validate_record_length(&records)?;
     println!("Valid records: {} \nInvalid records: {}", valid, invalid);
     if invalid > 0 {
@@ -21,7 +15,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let dup_detect = detect_duplicate_ids(&headers, &records)?;
     // print!("{:?}", dup_detect);
     let dup_report = report_duplicate_records(&headers, &records, &dup_detect);
-    print!("{:?}", dup_report);
+    // print!("{:?}", dup_report);
     let delete_dups = remove_duplicate_ids(&headers, &records)?;
     print!("{:?}", delete_dups);
 

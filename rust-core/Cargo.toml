@@ -5,3 +5,8 @@ edition = "2024"
 
 [dependencies]
 csv = "1.4.0"
+pyo3 = { version = "0.27", features = ["extension-module"] }
+
+[lib]
+name = "mindscope_core"
+crate-type = ["cdylib", "rlib"]
