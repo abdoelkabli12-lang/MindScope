@@ -90,3 +90,40 @@ print("\nEDA completed.")
 
 
 
+numerical = df.select_dtypes(include="number").drop(
+    columns=["Student_ID"],
+    errors="ignore"
+).columns
+
+for col in numerical:
+    Q1 = df[col].quantile(0.25)
+    Q3 = df[col].quantile(0.75)
+
+    IQR = Q3 - Q1
+
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    outliers = df[
+        (df[col] < lower_bound) |
+        (df[col] > upper_bound)
+    ]
+
+    print(f"\nColumn: {col}")
+    print(f"Lower bound: {lower_bound:.2f}")
+    print(f"Upper bound: {upper_bound:.2f}")
+    print(f"Outliers: {len(outliers)}")
+    print(f"Percentage: {len(outliers) / len(df) * 100:.2f}%")
+    
+
+
+from scipy.stats import zscore
+
+for col in numerical:
+    z_scores = zscore(df[col].dropna())
+
+    outliers = abs(z_scores) > 3
+
+    print(f"\nColumn: {col}")
+    print(f"Outliers: {outliers.sum()}")
+    print(f"Percentage: {outliers.sum() / len(z_scores) * 100:.2f}%")
