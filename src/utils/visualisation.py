@@ -90,16 +90,3 @@ print("\nEDA completed.")
 
 
 
-for col in numerical:
-    Q1 = df[col].quantile(0.25)
-    Q3 = df[col].quantile(0.75)
-    
-    IQR = Q3 - Q1
-    
-    lower_bound = Q1 - 1.5*IQR
-    upper_bound = Q3 + 1.5*IQR
-    
-    
-    print("The number of outliers (lower bound) is: ", (df[col] < lower_bound).sum())
-    print("The number of outliers (upper bound) is: ",  (df[col] > upper_bound).sum())
-    
