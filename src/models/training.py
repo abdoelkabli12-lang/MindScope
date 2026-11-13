@@ -1,4 +1,6 @@
 import pandas as pd
+import joblib
+from pathlib import Path
 
 
 from sklearn.model_selection import train_test_split
@@ -209,3 +211,11 @@ print(comparison_df.round(4))
 
 print("\n========== OPTIMIZED CLASSIFICATION REPORT ==========")
 print(classification_report(y_test, y_pred_optimized))
+
+MODEL_PATH = Path("../MindScope/models/mindscope_best_model.pkl")
+
+MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+joblib.dump(best_lr_model, MODEL_PATH)
+
+print(f"Best model saved to: {MODEL_PATH}")
