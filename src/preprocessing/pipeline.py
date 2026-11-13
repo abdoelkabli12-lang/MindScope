@@ -6,7 +6,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
 
 def split_features_target(df):
-    X = df.drop(columns=["Student_ID", "Mental_Health_Risk"])
+    X = df.drop(columns=["Student_ID", "Mental_Health_Risk", "Gender", "Age"])
     y = df["Mental_Health_Risk"]
 
     return X, y
@@ -22,13 +22,12 @@ def build_preprocessor(X):
     ]
 
     nom_cols = [
-        "Gender",
         "Part_Time_Job",
         "Previous_Mental_Health_History"
     ]
 
     num_pipeline = Pipeline([
-        ("imputer", SimpleImputer(strategy="median")),
+        ("imputer", SimpleImputer(strategy="mean")),
         ("scaler", StandardScaler()),
     ])
 
